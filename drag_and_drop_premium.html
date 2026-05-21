@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Educación Financiera - Clasifica correctamente</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+
+    <!-- Librerías Externas -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#000c4b",
+                        "on-surface": "#0c1d2b",
+                        "surface": "#f7f9ff",
+                        "surface-dim": "#cbdcef",
+                        "surface-container-low": "#edf4ff",
+                        "surface-container": "#e3efff",
+                        "surface-container-high": "#d9eafe",
+                        "on-surface-variant": "#454652",
+                        "outline-variant": "#c5c5d4",
+                        "secondary": "#006d38",
+                        "secondary-container": "#94f4ad",
+                        "on-secondary-container": "#00723a",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#bac3ff",
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            /* Un fondo con un gradiente sutil para darle más vida */
+            background: linear-gradient(135deg, #f7f9ff 0%, #d9eafe 100%);
+            min-height: 100vh;
+        }
+
+        .dark body {
+            background: linear-gradient(135deg, #0c1d2b 0%, #152b3f 100%);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* Glassmorphism Styles */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        .dark .glass-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-zone {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .dark .glass-zone {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .chip {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+            cursor: grab;
+        }
+
+        .chip:active {
+            cursor: grabbing;
+        }
+
+        .sortable-ghost {
+            opacity: 0.4;
+        }
+
+        .sortable-drag {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2) !important;
+            transform: scale(1.05) !important;
+            cursor: grabbing !important;
+        }
+
+        .zone-highlight {
+            transform: scale(1.02);
+            border-color: rgba(43, 62, 153, 0.8) !important;
+            box-shadow: 0 0 15px rgba(43, 62, 153, 0.3);
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .pop-in {
+            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+    </style>
+</head>
+
+<body class="text-on-surface font-body-md text-body-md flex flex-col transition-colors duration-300">
+
+    <!-- Top App Bar -->
+    <header class="flex justify-between items-center w-full px-4 md:px-12 h-16 glass-panel fixed top-0 z-50">
+        <div class="flex items-center gap-3">
+            <span
+                class="material-symbols-outlined text-primary dark:text-primary-fixed-dim cursor-pointer p-2 rounded-full hover:bg-surface-container-high dark:hover:bg-white/10 transition-colors"
+                data-icon="menu">menu</span>
+            <h1 class="font-title-lg text-title-lg font-bold text-primary dark:text-primary-fixed-dim">Educación
+                Financiera</h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <!-- Botón de Tema -->
+            <button id="theme-toggle"
+                class="flex items-center justify-center text-on-surface-variant dark:text-primary-fixed-dim cursor-pointer p-2 rounded-full hover:bg-surface-container-high dark:hover:bg-white/10 transition-colors"
+                aria-label="Cambiar tema">
+                <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
+            </button>
+            <span
+                class="material-symbols-outlined text-on-surface-variant dark:text-primary-fixed-dim cursor-pointer p-2 rounded-full hover:bg-surface-container-high dark:hover:bg-white/10 transition-colors"
+                data-icon="help_outline">help_outline</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="mt-20 flex-grow px-4 md:px-12 max-w-[1200px] mx-auto w-full pb-32">
+        <!-- Activity Header -->
+        <div class="mb-6">
+            <h2
+                class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary dark:text-primary-fixed-dim mb-1">
+                Clasifica correctamente</h2>
+            <p class="text-on-surface-variant dark:text-gray-300 font-body-md text-body-md">Arrastra cada aplicación o
+                servicio hacia la categoría correcta. Puedes usar el mouse o tu dedo en pantallas táctiles.</p>
+        </div>
+
+        <!-- Draggable Source Area -->
+        <section class="glass-panel rounded-xl p-6 mb-8">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim">drag_indicator</span>
+                <span
+                    class="font-label-lg text-label-lg text-primary dark:text-primary-fixed-dim uppercase tracking-wider">Elementos
+                    disponibles</span>
+            </div>
+            <div class="flex flex-wrap gap-3 justify-center min-h-[60px]" id="source-container">
+                <!-- Draggable Chips -->
+                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
+                    data-app="Nequi" data-correct="billetera">Nequi</div>
+                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
+                    style="animation-delay: 0.05s" data-app="Daviplata" data-correct="billetera">Daviplata</div>
+                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
+                    style="animation-delay: 0.1s" data-app="Movii" data-correct="billetera">Movii</div>
+                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
+                    style="animation-delay: 0.15s" data-app="App Bancolombia" data-correct="bancaria">App Bancolombia
+                </div>
+                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
+                    style="animation-delay: 0.2s" data-app="App BBVA" data-correct="bancaria">App BBVA</div>
+                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
+                    style="animation-delay: 0.25s" data-app="Mercado Libre" data-correct="tienda">Mercado Libre</div>
+                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
+                    style="animation-delay: 0.3s" data-app="Amazon" data-correct="tienda">Amazon</div>
+                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
+                    style="animation-delay: 0.35s" data-app="WhatsApp" data-correct="otro">WhatsApp</div>
+                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
+                    style="animation-delay: 0.4s" data-app="Google Maps" data-correct="otro">Google Maps</div>
+                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
+                    style="animation-delay: 0.45s" data-app="Rappi" data-correct="otro">Rappi</div>
+            </div>
+        </section>
+
+        <!-- Drop Zones Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Zone: Billetera Digital -->
+            <div class="drop-zone glass-zone min-h-[160px] border-2 border-dashed border-[#1E8449]/50 dark:border-[#1E8449]/80 rounded-xl p-4 flex flex-col items-center transition-all duration-300"
+                data-zone="billetera">
+                <div class="flex items-center gap-2 mb-3 text-[#1E8449] dark:text-[#58D68D]">
+                    <span class="material-symbols-outlined">smartphone</span>
+                    <span class="font-title-lg text-title-lg font-bold">Billetera digital</span>
+                </div>
+                <div class="zone-content flex flex-wrap gap-2 justify-center w-full min-h-[60px]"></div>
+            </div>
+
+            <!-- Zone: App Bancaria -->
+            <div class="drop-zone glass-zone min-h-[160px] border-2 border-dashed border-[#1A5276]/50 dark:border-[#5DADE2]/80 rounded-xl p-4 flex flex-col items-center transition-all duration-300"
+                data-zone="bancaria">
+                <div class="flex items-center gap-2 mb-3 text-[#1A5276] dark:text-[#5DADE2]">
+                    <span class="material-symbols-outlined">account_balance</span>
+                    <span class="font-title-lg text-title-lg font-bold">App bancaria</span>
+                </div>
+                <div class="zone-content flex flex-wrap gap-2 justify-center w-full min-h-[60px]"></div>
+            </div>
+
+            <!-- Zone: Tienda en Línea -->
+            <div class="drop-zone glass-zone min-h-[160px] border-2 border-dashed border-[#935116]/50 dark:border-[#F5B041]/80 rounded-xl p-4 flex flex-col items-center transition-all duration-300"
+                data-zone="tienda">
+                <div class="flex items-center gap-2 mb-3 text-[#935116] dark:text-[#F5B041]">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                    <span class="font-title-lg text-title-lg font-bold">Tienda en línea</span>
+                </div>
+                <div class="zone-content flex flex-wrap gap-2 justify-center w-full min-h-[60px]"></div>
+            </div>
+
+            <!-- Zone: Otro -->
+            <div class="drop-zone glass-zone min-h-[160px] border-2 border-dashed border-[#5D6D7E]/50 dark:border-[#BDC3C7]/80 rounded-xl p-4 flex flex-col items-center transition-all duration-300"
+                data-zone="otro">
+                <div class="flex items-center gap-2 mb-3 text-[#5D6D7E] dark:text-[#BDC3C7]">
+                    <span class="material-symbols-outlined">grid_view</span>
+                    <span class="font-title-lg text-title-lg font-bold">Otro</span>
+                </div>
+                <div class="zone-content flex flex-wrap gap-2 justify-center w-full min-h-[60px]"></div>
+            </div>
+        </section>
+
+        <!-- Feedback & Scoring -->
+        <section class="mt-8 flex flex-col md:flex-row items-center gap-6 glass-panel rounded-xl p-6">
+            <div class="w-full md:w-1/3">
+                <div class="flex justify-between items-end mb-2">
+                    <span class="font-label-lg text-label-lg text-primary dark:text-primary-fixed-dim">Puntuación</span>
+                    <span class="font-title-lg text-title-lg font-bold text-primary dark:text-primary-fixed-dim"
+                        id="score-text">0 / 10</span>
+                </div>
+                <div class="w-full bg-outline-variant dark:bg-slate-600 h-3 rounded-full overflow-hidden shadow-inner">
+                    <div class="h-full bg-secondary dark:bg-secondary-container w-0 transition-all duration-700 ease-out"
+                        id="progress-bar"></div>
+                </div>
+            </div>
+            <div class="w-full md:w-2/3 hidden" id="feedback-area">
+                <div
+                    class="p-4 rounded-lg border-l-4 bg-[#D5F5E3] dark:bg-[#1E8449]/20 border-[#1E8449] dark:border-[#58D68D] flex items-center gap-3 shadow-sm transition-all pop-in">
+                    <span class="material-symbols-outlined text-[#1E8449] dark:text-[#58D68D]"
+                        id="feedback-icon">info</span>
+                    <p class="text-[#1E8449] dark:text-[#58D68D] font-label-lg text-label-lg" id="feedback-msg"></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Action Bar / Nav -->
+    <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center py-2 px-6 glass-panel rounded-t-2xl">
+        <button
+            class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim hover:bg-surface-variant dark:hover:bg-white/10 px-6 py-2 transition-all rounded-xl active:scale-95"
+            id="btn-verify">
+            <span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+            <span class="font-label-md text-label-md mt-1">Verificar</span>
+        </button>
+        <button
+            class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim hover:bg-surface-variant dark:hover:bg-white/10 px-6 py-2 transition-all rounded-xl active:scale-95"
+            id="btn-retry">
+            <span class="material-symbols-outlined" data-icon="replay">replay</span>
+            <span class="font-label-md text-label-md mt-1">Reintentar</span>
+        </button>
+        <button
+            class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim hover:bg-surface-variant dark:hover:bg-white/10 px-6 py-2 transition-all rounded-xl active:scale-95"
+            id="btn-solution">
+            <span class="material-symbols-outlined" data-icon="lightbulb">lightbulb</span>
+            <span class="font-label-md text-label-md mt-1">Solución</span>
+        </button>
+    </nav>
+
+    <script>
+        // Configuración Dark Mode
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const htmlElement = document.documentElement;
+
+        themeToggle.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            if (htmlElement.classList.contains('dark')) {
+                themeIcon.textContent = 'light_mode';
+            } else {
+                themeIcon.textContent = 'dark_mode';
+            }
+        });
+
+        // Implementación de SortableJS para soporte nativo táctil y de ratón
+        const sourceContainer = document.getElementById('source-container');
+        const zoneContents = document.querySelectorAll('.zone-content');
+
+        const sortableOptions = {
+            group: 'shared', // Conjunto para poder mover entre todos
+            animation: 250,
+            ghostClass: 'sortable-ghost',
+            dragClass: 'sortable-drag',
+            easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+            onChoose: function (evt) {
+                // Efecto al tocar la tarjeta (feedback para móvil)
+                evt.item.style.transform = 'scale(1.05)';
+            },
+            onUnchoose: function (evt) {
+                evt.item.style.transform = '';
+            },
+            onMove: function (evt, originalEvent) {
+                // Se puede agregar lógica al mover
+            }
+        };
+
+        // Iniciar Sortable en el contenedor origen
+        new Sortable(sourceContainer, sortableOptions);
+
+        // Iniciar Sortable en cada zona de soltado
+        zoneContents.forEach(zone => {
+            new Sortable(zone, sortableOptions);
+        });
+
+        // Lógica de validación
+        const btnVerify = document.getElementById('btn-verify');
+        const btnRetry = document.getElementById('btn-retry');
+        const btnSolution = document.getElementById('btn-solution');
+        const scoreText = document.getElementById('score-text');
+        const progressBar = document.getElementById('progress-bar');
+        const feedbackArea = document.getElementById('feedback-area');
+        const feedbackMsg = document.getElementById('feedback-msg');
+        const feedbackIcon = document.getElementById('feedback-icon');
+
+        const totalChips = document.querySelectorAll('.chip').length;
+
+        function triggerConfetti() {
+            const duration = 3000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function () {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        btnVerify.addEventListener('click', () => {
+            let score = 0;
+
+            // Revisar todas las tarjetas que ya no están en sourceContainer
+            const allInZones = document.querySelectorAll('.drop-zone .zone-content .chip');
+
+            allInZones.forEach(chip => {
+                const zoneElement = chip.closest('.drop-zone');
+                if (!zoneElement) return;
+
+                const zone = zoneElement.dataset.zone;
+                const correctZone = chip.dataset.correct;
+
+                // Limpiar clases previas
+                chip.classList.remove('border-outline-variant', 'border-error', 'border-secondary', 'bg-error-container', 'bg-secondary-container', 'dark:bg-slate-800');
+
+                if (zone === correctZone) {
+                    score++;
+                    chip.classList.add('border-secondary', 'bg-secondary-container', 'text-on-secondary-container', 'dark:bg-[#1E8449]', 'dark:text-white', 'dark:border-[#58D68D]');
+                    chip.classList.remove('text-primary');
+                } else {
+                    chip.classList.add('border-error', 'bg-error-container', 'text-on-error-container', 'shake', 'dark:bg-[#93000a]', 'dark:text-white', 'dark:border-[#ffdad6]');
+                    chip.classList.remove('text-primary');
+                    setTimeout(() => chip.classList.remove('shake'), 500);
+                }
+            });
+
+            const percentage = (score / totalChips) * 100;
+            scoreText.textContent = `${score} / ${totalChips}`;
+            progressBar.style.width = `${percentage}%`;
+
+            // Modificar colores del progreso si hay errores o todo está bien
+            if (percentage === 100) {
+                progressBar.classList.remove('bg-error');
+                progressBar.classList.add('bg-secondary', 'dark:bg-[#58D68D]');
+                triggerConfetti();
+                feedbackIcon.textContent = 'celebration';
+            } else {
+                progressBar.classList.remove('bg-secondary', 'dark:bg-[#58D68D]');
+                progressBar.classList.add('bg-error');
+                feedbackIcon.textContent = 'info';
+            }
+
+            // Mostrar Feedback
+            feedbackArea.classList.remove('hidden');
+
+            // Ajustar el contenedor de feedback a error o success
+            const fbContainer = feedbackArea.firstElementChild;
+            fbContainer.className = 'p-4 rounded-lg border-l-4 flex items-center gap-3 shadow-sm transition-all pop-in';
+
+            if (percentage === 100) {
+                fbContainer.classList.add('bg-[#D5F5E3]', 'border-[#1E8449]', 'dark:bg-[#1E8449]/20', 'dark:border-[#58D68D]');
+                feedbackMsg.className = 'text-[#1E8449] dark:text-[#58D68D] font-label-lg text-label-lg';
+                feedbackIcon.className = 'material-symbols-outlined text-[#1E8449] dark:text-[#58D68D]';
+                feedbackMsg.textContent = "¡Increíble! Conoces perfectamente cómo clasificar estos servicios digitales.";
+            } else {
+                fbContainer.classList.add('bg-error-container', 'border-error', 'dark:bg-[#93000a]/30', 'dark:border-[#ffdad6]');
+                feedbackMsg.className = 'text-on-error-container dark:text-[#ffdad6] font-label-lg text-label-lg';
+                feedbackIcon.className = 'material-symbols-outlined text-on-error-container dark:text-[#ffdad6]';
+
+                if (percentage >= 70) {
+                    feedbackMsg.textContent = "¡Muy bien! Estás muy cerca de la perfección. Las tarjetas rojas están en el lugar equivocado.";
+                } else if (percentage >= 40) {
+                    feedbackMsg.textContent = "Buen intento. Algunos servicios pueden ser confusos, reubica los elementos en rojo.";
+                } else {
+                    feedbackMsg.textContent = "No te rindas. Clasificar servicios financieros ayuda a entender mejor sus funciones. Vuelve a intentarlo.";
+                }
+            }
+        });
+
+        btnRetry.addEventListener('click', () => {
+            const allChips = document.querySelectorAll('.chip');
+            allChips.forEach(chip => {
+                // Remover estilos de resultado
+                chip.className = 'chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200';
+                sourceContainer.appendChild(chip);
+            });
+
+            scoreText.textContent = `0 / ${totalChips}`;
+            progressBar.style.width = "0%";
+            progressBar.classList.remove('bg-error');
+            progressBar.classList.add('bg-secondary', 'dark:bg-[#58D68D]');
+            feedbackArea.classList.add('hidden');
+        });
+
+        btnSolution.addEventListener('click', () => {
+            const allChips = document.querySelectorAll('.chip');
+            allChips.forEach(chip => {
+                const correctZone = chip.dataset.correct;
+                const zoneElement = document.querySelector(`.drop-zone[data-zone="${correctZone}"] .zone-content`);
+
+                // Asignar estilo de correcto
+                chip.className = 'chip pop-in border-secondary bg-secondary-container text-on-secondary-container dark:bg-[#1E8449] dark:text-white dark:border-[#58D68D] px-4 py-2 rounded-full shadow-sm font-label-lg text-label-lg';
+
+                zoneElement.appendChild(chip);
+            });
+
+            scoreText.textContent = `${totalChips} / ${totalChips}`;
+            progressBar.style.width = "100%";
+            progressBar.classList.remove('bg-error');
+            progressBar.classList.add('bg-secondary', 'dark:bg-[#58D68D]');
+
+            // Mostrar mensaje de solución
+            feedbackArea.classList.remove('hidden');
+            const fbContainer = feedbackArea.firstElementChild;
+            fbContainer.className = 'p-4 rounded-lg border-l-4 bg-[#D5F5E3] border-[#1E8449] dark:bg-[#1E8449]/20 dark:border-[#58D68D] flex items-center gap-3 shadow-sm transition-all pop-in';
+            feedbackMsg.className = 'text-[#1E8449] dark:text-[#58D68D] font-label-lg text-label-lg';
+            feedbackIcon.className = 'material-symbols-outlined text-[#1E8449] dark:text-[#58D68D]';
+            feedbackIcon.textContent = 'lightbulb';
+            feedbackMsg.textContent = "Esta es la clasificación correcta según el tipo de servicio financiero o digital.";
+        });
+
+    </script>
+</body>
+
+</html>
