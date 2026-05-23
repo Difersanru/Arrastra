@@ -1,523 +1,999 @@
 <!DOCTYPE html>
-<html class="light" lang="es">
-
+<html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Educación Financiera - Clasifica correctamente</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Clasifica correctamente · Educación Financiera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+/* ── TOKENS ──────────────────────────────────────────── */
+:root{
+  --primary:#000c4b;
+  --primary-soft:#e8eaf6;
+  --safe:#1b7a43;     --safe-lt:#d5f5e3;   --safe-dk:#0a4a28;
+  --bank:#1a4f7a;     --bank-lt:#d6eaf8;   --bank-dk:#0d2f4a;
+  --store:#8a4a10;    --store-lt:#fdebd0;  --store-dk:#5a2f08;
+  --other:#4a5568;    --other-lt:#edf2f7;  --other-dk:#2d3748;
+  --danger:#ba1a1a;   --danger-lt:#fff0f0;
+  --bg-from:#eef2ff;  --bg-to:#c7d9f5;
+  --surface:rgba(255,255,255,0.72);
+  --surface-border:rgba(255,255,255,0.9);
+  --shadow:0 4px 20px rgba(0,0,60,.10);
+  --shadow-chip:0 2px 8px rgba(0,0,0,.10);
+  --r:14px; --r-chip:40px;
+  --gap:clamp(6px,2vw,12px);
+}
 
-    <!-- Librerías Externas -->
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+/* ── RESET ───────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;overflow-x:hidden}
 
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "primary": "#000c4b",
-                        "on-surface": "#0c1d2b",
-                        "surface": "#f7f9ff",
-                        "surface-dim": "#cbdcef",
-                        "surface-container-low": "#edf4ff",
-                        "surface-container": "#e3efff",
-                        "surface-container-high": "#d9eafe",
-                        "on-surface-variant": "#454652",
-                        "outline-variant": "#c5c5d4",
-                        "secondary": "#006d38",
-                        "secondary-container": "#94f4ad",
-                        "on-secondary-container": "#00723a",
-                        "error": "#ba1a1a",
-                        "error-container": "#ffdad6",
-                        "on-error-container": "#93000a",
-                        "primary-fixed-dim": "#bac3ff",
-                    },
-                    "fontFamily": {
-                        "body-md": ["Inter"],
-                        "title-lg": ["Inter"],
-                        "label-lg": ["Inter"],
-                        "label-md": ["Inter"],
-                        "headline-lg": ["Inter"],
-                        "headline-lg-mobile": ["Inter"]
-                    },
-                    "fontSize": {
-                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "500" }],
-                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "600" }],
-                        "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
-                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
-                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
-                    }
-                },
-            },
-        }
-    </script>
-    <style>
-        body {
-            /* Un fondo con un gradiente sutil para darle más vida */
-            background: linear-gradient(135deg, #f7f9ff 0%, #d9eafe 100%);
-            min-height: 100vh;
-        }
+/* ── BODY ────────────────────────────────────────────── */
+body{
+  font-family:'Nunito',sans-serif;
+  background:linear-gradient(145deg,var(--bg-from) 0%,var(--bg-to) 100%);
+  background-attachment:local;
+  min-height:100%;
+  padding:clamp(8px,2.5vw,14px);
+  display:flex;
+  flex-direction:column;
+  gap:var(--gap);
+  color:var(--primary);
+}
 
-        .dark body {
-            background: linear-gradient(135deg, #0c1d2b 0%, #152b3f 100%);
-        }
+/* ── GLASS MIXIN ─────────────────────────────────────── */
+.glass{
+  background:var(--surface);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1.5px solid var(--surface-border);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+}
 
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
+/* ── HEADER ──────────────────────────────────────────── */
+.header{
+  padding:clamp(8px,2.5vw,12px) clamp(10px,3vw,16px);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.header-icon{font-size:clamp(1.4rem,5vw,1.8rem);line-height:1}
+.header-title{
+  font-size:clamp(.85rem,3.5vw,1.05rem);
+  font-weight:900;
+  line-height:1.15;
+}
+.header-sub{
+  font-size:clamp(.62rem,2.2vw,.72rem);
+  font-weight:600;
+  color:#5a6282;
+  margin-top:2px;
+}
 
-        /* Glassmorphism Styles */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-        }
+/* ── CHIPS BANK ──────────────────────────────────────── */
+.bank-label{
+  font-size:clamp(.6rem,2vw,.68rem);
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#5a6282;
+  margin-bottom:6px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.bank-label::before{
+  content:'';width:6px;height:6px;
+  background:#5a6282;border-radius:50%;
+  flex-shrink:0;
+}
+.bank-panel{padding:clamp(8px,2.5vw,12px) clamp(10px,3vw,14px)}
 
-        .dark .glass-panel {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        }
+#source-container{
+  display:flex;
+  flex-wrap:wrap;
+  gap:clamp(5px,1.5vw,8px);
+  min-height:36px;
+  justify-content:center;
+  transition:min-height .3s;
+}
+#source-container.empty{
+  min-height:32px;
+  justify-content:center;
+  align-items:center;
+}
+#source-container.empty::after{
+  content:'✅ Todas las fichas colocadas';
+  font-size:.72rem;
+  font-weight:700;
+  color:#7b8ab5;
+}
 
-        .glass-zone {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
+/* ── CHIP ────────────────────────────────────────────── */
+.chip{
+  background:#fff;
+  border:1.5px solid #cbd5e1;
+  border-radius:var(--r-chip);
+  padding:clamp(5px,1.8vw,7px) clamp(10px,3vw,14px);
+  font-family:'Nunito',sans-serif;
+  font-size:clamp(.68rem,2.4vw,.8rem);
+  font-weight:700;
+  color:var(--primary);
+  cursor:grab;
+  user-select:none;
+  touch-action:none;
+  white-space:nowrap;
+  box-shadow:var(--shadow-chip);
+  transition:transform .15s cubic-bezier(.34,1.56,.64,1),
+             box-shadow .15s,border-color .15s;
+}
+.chip:hover{transform:scale(1.06);box-shadow:0 5px 14px rgba(0,0,0,.16)}
+.chip:active{cursor:grabbing}
+.chip.correct{background:var(--safe-lt);border-color:var(--safe);color:var(--safe-dk)}
+.chip.incorrect{background:var(--danger-lt);border-color:var(--danger);color:#7f1d1d}
 
-        .dark .glass-zone {
-            background: rgba(255, 255, 255, 0.05);
-        }
+/* SortableJS */
+.sortable-ghost{opacity:.3;border-style:dashed}
+.sortable-drag{
+  box-shadow:0 14px 30px rgba(0,0,60,.25)!important;
+  transform:scale(1.1) rotate(1.5deg)!important;
+  cursor:grabbing!important;
+  z-index:9999;border-radius:var(--r-chip);
+}
 
-        .chip {
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
-            cursor: grab;
-        }
+/* ── ZONES GRID 2 × 2 ────────────────────────────────── */
+.zones-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:var(--gap);
+  flex:1; /* take available space */
+}
 
-        .chip:active {
-            cursor: grabbing;
-        }
+.drop-zone{
+  border-radius:var(--r);
+  border:2px dashed;
+  padding:clamp(6px,2vw,10px) clamp(6px,2vw,8px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  min-height:clamp(115px,25vw,175px);
+  transition:transform .2s,box-shadow .2s,border-color .2s,background .2s;
+  position:relative;
+  overflow:hidden;
+}
 
-        .sortable-ghost {
-            opacity: 0.4;
-        }
+/* subtle inner pattern */
+.drop-zone::before{
+  content:'';
+  position:absolute;inset:0;
+  opacity:.04;
+  background-image:radial-gradient(circle,currentColor 1px,transparent 1px);
+  background-size:18px 18px;
+  pointer-events:none;
+}
 
-        .sortable-drag {
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2) !important;
-            transform: scale(1.05) !important;
-            cursor: grabbing !important;
-        }
+.zone-billetera{border-color:var(--safe);    background:rgba(27,122,67,.06);  color:var(--safe)}
+.zone-bancaria {border-color:var(--bank);    background:rgba(26,79,122,.06);  color:var(--bank)}
+.zone-tienda   {border-color:var(--store);   background:rgba(138,74,16,.06);  color:var(--store)}
+.zone-otro     {border-color:var(--other);   background:rgba(74,85,104,.06);  color:var(--other)}
 
-        .zone-highlight {
-            transform: scale(1.02);
-            border-color: rgba(43, 62, 153, 0.8) !important;
-            box-shadow: 0 0 15px rgba(43, 62, 153, 0.3);
-        }
+.drop-zone.dragover{
+  transform:scale(1.03);
+  border-style:solid;
+  box-shadow:0 0 0 3px rgba(0,60,200,.18);
+  background:rgba(235,244,255,.85)!important;
+  border-color:#2b6cb0!important;
+}
 
-        .shake {
-            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
-        }
+/* Zone header */
+.zone-hd{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  margin-bottom:clamp(5px,1.5vw,8px);
+}
+.zone-icon{
+  font-size:clamp(1.1rem,3.8vw,1.5rem);
+  line-height:1;
+  filter:drop-shadow(0 1px 3px rgba(0,0,0,.15));
+}
+.zone-title{
+  font-size:clamp(.58rem,2vw,.72rem);
+  font-weight:900;
+  text-align:center;
+  line-height:1.2;
+  letter-spacing:.01em;
+}
+/* title colors inherited from parent .zone-* */
 
-        @keyframes shake {
+/* Zone content (sortable target) */
+.zone-content{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  justify-content:center;
+  width:100%;
+  min-height:28px;
+}
+/* smaller chip inside zone */
+.zone-content .chip{
+  font-size:clamp(.6rem,1.9vw,.72rem);
+  padding:4px 9px;
+}
 
-            10%,
-            90% {
-                transform: translate3d(-1px, 0, 0);
-            }
+/* ── SCORE ───────────────────────────────────────────── */
+.score-wrap{
+  padding:clamp(8px,2.5vw,11px) clamp(10px,3vw,14px);
+}
+.score-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+.score-lbl{font-size:.72rem;font-weight:800;color:#5a6282}
+.score-val{font-size:.9rem;font-weight:900;color:var(--primary)}
+.score-track{background:#e2e8f0;border-radius:20px;height:10px;overflow:hidden}
+.score-fill{
+  height:100%;border-radius:20px;width:0%;
+  background:linear-gradient(90deg,var(--safe),#34d399);
+  transition:width .7s cubic-bezier(.4,0,.2,1);
+}
+.score-fill.bad{background:linear-gradient(90deg,var(--danger),#f87171)}
 
-            20%,
-            80% {
-                transform: translate3d(2px, 0, 0);
-            }
+/* ── FEEDBACK ────────────────────────────────────────── */
+.feedback{
+  display:none;
+  border-radius:var(--r);
+  padding:clamp(9px,2.5vw,12px) clamp(12px,3vw,16px);
+  font-size:clamp(.72rem,2.5vw,.82rem);
+  font-weight:700;
+  line-height:1.55;
+  animation:slideUp .28s ease both;
+}
+.feedback.show{display:block}
+.feedback.ok  {background:var(--safe-lt); border:1.5px solid var(--safe);   color:var(--safe-dk)}
+.feedback.warn{background:#fffbeb;        border:1.5px solid #d97706;       color:#78350f}
+.feedback.err {background:var(--danger-lt);border:1.5px solid var(--danger);color:#7f1d1d}
+.feedback.info{background:var(--bank-lt); border:1.5px solid var(--bank);   color:var(--bank-dk)}
 
-            30%,
-            50%,
-            70% {
-                transform: translate3d(-4px, 0, 0);
-            }
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(8px)}
+  to  {opacity:1;transform:translateY(0)}
+}
 
-            40%,
-            60% {
-                transform: translate3d(4px, 0, 0);
-            }
-        }
+/* ── BUTTONS ─────────────────────────────────────────── */
+.btn-row{
+  display:flex;gap:8px;
+  justify-content:center;flex-wrap:wrap;
+  padding-bottom:4px;
+}
+.btn{
+  font-family:'Nunito',sans-serif;
+  font-size:clamp(.72rem,2.5vw,.84rem);
+  font-weight:800;
+  border:none;border-radius:var(--r-chip);
+  padding:clamp(9px,2.5vw,11px) clamp(14px,4vw,22px);
+  cursor:pointer;
+  box-shadow:0 3px 10px rgba(0,0,0,.15);
+  transition:transform .15s,box-shadow .15s;
+  display:inline-flex;align-items:center;gap:5px;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.2)}
+.btn:active{transform:translateY(0)}
+.btn-v{background:var(--primary);color:#fff}
+.btn-r{background:#c05621;color:#fff}
+.btn-s{background:#4a5568;color:#fff}
 
-        @keyframes popIn {
-            0% {
-                transform: scale(0.8);
-                opacity: 0;
-            }
+/* ── ANIMATIONS ──────────────────────────────────────── */
+@keyframes shake{
+  10%,90%{transform:translate3d(-1px,0,0)}
+  20%,80%{transform:translate3d(2px,0,0)}
+  30%,50%,70%{transform:translate3d(-3px,0,0)}
+  40%,60%{transform:translate3d(3px,0,0)}
+}
+.shake{animation:shake .42s ease both}
 
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .pop-in {
-            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-    </style>
+@keyframes popIn{
+  0%{transform:scale(.7);opacity:0}
+  100%{transform:scale(1);opacity:1}
+}
+.pop{animation:popIn .28s cubic-bezier(.34,1.56,.64,1) both}
+</style>
 </head>
+<body>
 
-<body class="text-on-surface font-body-md text-body-md flex flex-col transition-colors duration-300">
+<!-- ── HEADER ───────────────────────────────────────── -->
+<header class="glass header">
+  <span class="header-icon">💳</span>
+  <div>
+    <div class="header-title">Educación Financiera</div>
+    <div class="header-sub">Arrastra cada app a su categoría · Puedes reubicarlo cuantas veces quieras</div>
+  </div>
+</header>
 
-    <!-- Top App Bar -->
-    <header class="flex justify-between items-center w-full px-4 md:px-12 h-16 glass-panel fixed top-0 z-50">
-        <div class="flex items-center gap-3">
-            <span
-                class="material-symbols-outlined text-primary dark:text-primary-fixed-dim cursor-pointer p-2 rounded-full hover:bg-surface-container-high dark:hover:bg-white/10 transition-colors"
-                data-icon="menu">menu</span>
-            <h1 class="font-title-lg text-title-lg font-bold text-primary dark:text-primary-fixed-dim">Educación
-                Financiera</h1>
-        </div>
-        <div class="flex items-center gap-3">
-            <!-- Botón de Tema -->
-            <button id="theme-toggle"
-                class="flex items-center justify-center text-on-surface-variant dark:text-primary-fixed-dim cursor-pointer p-2 rounded-full hover:bg-surface-container-high dark:hover:bg-white/10 transition-colors"
-                aria-label="Cambiar tema">
-                <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
-            </button>
-            <span
-                class="material-symbols-outlined text-on-surface-variant dark:text-primary-fixed-dim cursor-pointer p-2 rounded-full hover:bg-surface-container-high dark:hover:bg-white/10 transition-colors"
-                data-icon="help_outline">help_outline</span>
-        </div>
-    </header>
+<!-- ── CHIPS BANK ────────────────────────────────────── -->
+<section class="glass bank-panel">
+  <div class="bank-label">Elementos disponibles</div>
+  <div id="source-container">
+    <div class="chip pop" style="animation-delay:.00s" data-app="Nequi"          data-correct="billetera">Nequi</div>
+    <div class="chip pop" style="animation-delay:.05s" data-app="Daviplata"      data-correct="billetera">Daviplata</div>
+    <div class="chip pop" style="animation-delay:.10s" data-app="Movii"          data-correct="billetera">Movii</div>
+    <div class="chip pop" style="animation-delay:.15s" data-app="App Bancolombia" data-correct="bancaria">App Bancolombia</div>
+    <div class="chip pop" style="animation-delay:.20s" data-app="App BBVA"       data-correct="bancaria">App BBVA</div>
+    <div class="chip pop" style="animation-delay:.25s" data-app="Mercado Libre"  data-correct="tienda">Mercado Libre</div>
+    <div class="chip pop" style="animation-delay:.30s" data-app="Amazon"         data-correct="tienda">Amazon</div>
+    <div class="chip pop" style="animation-delay:.35s" data-app="WhatsApp"       data-correct="otro">WhatsApp</div>
+    <div class="chip pop" style="animation-delay:.40s" data-app="Google Maps"    data-correct="otro">Google Maps</div>
+    <div class="chip pop" style="animation-delay:.45s" data-app="Rappi"          data-correct="otro">Rappi</div>
+  </div>
+</section>
 
-    <!-- Main Content -->
-    <main class="mt-20 flex-grow px-4 md:px-12 max-w-[1200px] mx-auto w-full pb-32">
-        <!-- Activity Header -->
-        <div class="mb-6">
-            <h2
-                class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary dark:text-primary-fixed-dim mb-1">
-                Clasifica correctamente</h2>
-            <p class="text-on-surface-variant dark:text-gray-300 font-body-md text-body-md">Arrastra cada aplicación o
-                servicio hacia la categoría correcta. Puedes usar el mouse o tu dedo en pantallas táctiles.</p>
-        </div>
+<!-- ── ZONES GRID 2 × 2 ──────────────────────────────── -->
+<div class="zones-grid">
 
-        <!-- Draggable Source Area -->
-        <section class="glass-panel rounded-xl p-6 mb-8">
-            <div class="flex items-center gap-2 mb-4">
-                <span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim">drag_indicator</span>
-                <span
-                    class="font-label-lg text-label-lg text-primary dark:text-primary-fixed-dim uppercase tracking-wider">Elementos
-                    disponibles</span>
-            </div>
-            <div class="flex flex-wrap gap-3 justify-center min-h-[60px]" id="source-container">
-                <!-- Draggable Chips -->
-                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
-                    data-app="Nequi" data-correct="billetera">Nequi</div>
-                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
-                    style="animation-delay: 0.05s" data-app="Daviplata" data-correct="billetera">Daviplata</div>
-                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
-                    style="animation-delay: 0.1s" data-app="Movii" data-correct="billetera">Movii</div>
-                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
-                    style="animation-delay: 0.15s" data-app="App Bancolombia" data-correct="bancaria">App Bancolombia
-                </div>
-                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
-                    style="animation-delay: 0.2s" data-app="App BBVA" data-correct="bancaria">App BBVA</div>
-                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
-                    style="animation-delay: 0.25s" data-app="Mercado Libre" data-correct="tienda">Mercado Libre</div>
-                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
-                    style="animation-delay: 0.3s" data-app="Amazon" data-correct="tienda">Amazon</div>
-                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
-                    style="animation-delay: 0.35s" data-app="WhatsApp" data-correct="otro">WhatsApp</div>
-                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
-                    style="animation-delay: 0.4s" data-app="Google Maps" data-correct="otro">Google Maps</div>
-                <div class="chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200"
-                    style="animation-delay: 0.45s" data-app="Rappi" data-correct="otro">Rappi</div>
-            </div>
-        </section>
+  <div class="drop-zone zone-billetera" data-zone="billetera">
+    <div class="zone-hd">
+      <span class="zone-icon">📱</span>
+      <span class="zone-title">Billetera<br>digital</span>
+    </div>
+    <div class="zone-content" id="zc-billetera"></div>
+  </div>
 
-        <!-- Drop Zones Grid -->
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Zone: Billetera Digital -->
-            <div class="drop-zone glass-zone min-h-[160px] border-2 border-dashed border-[#1E8449]/50 dark:border-[#1E8449]/80 rounded-xl p-4 flex flex-col items-center transition-all duration-300"
-                data-zone="billetera">
-                <div class="flex items-center gap-2 mb-3 text-[#1E8449] dark:text-[#58D68D]">
-                    <span class="material-symbols-outlined">smartphone</span>
-                    <span class="font-title-lg text-title-lg font-bold">Billetera digital</span>
-                </div>
-                <div class="zone-content flex flex-wrap gap-2 justify-center w-full min-h-[60px]"></div>
-            </div>
+  <div class="drop-zone zone-bancaria" data-zone="bancaria">
+    <div class="zone-hd">
+      <span class="zone-icon">🏦</span>
+      <span class="zone-title">App<br>bancaria</span>
+    </div>
+    <div class="zone-content" id="zc-bancaria"></div>
+  </div>
 
-            <!-- Zone: App Bancaria -->
-            <div class="drop-zone glass-zone min-h-[160px] border-2 border-dashed border-[#1A5276]/50 dark:border-[#5DADE2]/80 rounded-xl p-4 flex flex-col items-center transition-all duration-300"
-                data-zone="bancaria">
-                <div class="flex items-center gap-2 mb-3 text-[#1A5276] dark:text-[#5DADE2]">
-                    <span class="material-symbols-outlined">account_balance</span>
-                    <span class="font-title-lg text-title-lg font-bold">App bancaria</span>
-                </div>
-                <div class="zone-content flex flex-wrap gap-2 justify-center w-full min-h-[60px]"></div>
-            </div>
+  <div class="drop-zone zone-tienda" data-zone="tienda">
+    <div class="zone-hd">
+      <span class="zone-icon">🛒</span>
+      <span class="zone-title">Tienda<br>en línea</span>
+    </div>
+    <div class="zone-content" id="zc-tienda"></div>
+  </div>
 
-            <!-- Zone: Tienda en Línea -->
-            <div class="drop-zone glass-zone min-h-[160px] border-2 border-dashed border-[#935116]/50 dark:border-[#F5B041]/80 rounded-xl p-4 flex flex-col items-center transition-all duration-300"
-                data-zone="tienda">
-                <div class="flex items-center gap-2 mb-3 text-[#935116] dark:text-[#F5B041]">
-                    <span class="material-symbols-outlined">shopping_cart</span>
-                    <span class="font-title-lg text-title-lg font-bold">Tienda en línea</span>
-                </div>
-                <div class="zone-content flex flex-wrap gap-2 justify-center w-full min-h-[60px]"></div>
-            </div>
+  <div class="drop-zone zone-otro" data-zone="otro">
+    <div class="zone-hd">
+      <span class="zone-icon">📦</span>
+      <span class="zone-title">Otro</span>
+    </div>
+    <div class="zone-content" id="zc-otro"></div>
+  </div>
 
-            <!-- Zone: Otro -->
-            <div class="drop-zone glass-zone min-h-[160px] border-2 border-dashed border-[#5D6D7E]/50 dark:border-[#BDC3C7]/80 rounded-xl p-4 flex flex-col items-center transition-all duration-300"
-                data-zone="otro">
-                <div class="flex items-center gap-2 mb-3 text-[#5D6D7E] dark:text-[#BDC3C7]">
-                    <span class="material-symbols-outlined">grid_view</span>
-                    <span class="font-title-lg text-title-lg font-bold">Otro</span>
-                </div>
-                <div class="zone-content flex flex-wrap gap-2 justify-center w-full min-h-[60px]"></div>
-            </div>
-        </section>
+</div><!-- .zones-grid -->
 
-        <!-- Feedback & Scoring -->
-        <section class="mt-8 flex flex-col md:flex-row items-center gap-6 glass-panel rounded-xl p-6">
-            <div class="w-full md:w-1/3">
-                <div class="flex justify-between items-end mb-2">
-                    <span class="font-label-lg text-label-lg text-primary dark:text-primary-fixed-dim">Puntuación</span>
-                    <span class="font-title-lg text-title-lg font-bold text-primary dark:text-primary-fixed-dim"
-                        id="score-text">0 / 10</span>
-                </div>
-                <div class="w-full bg-outline-variant dark:bg-slate-600 h-3 rounded-full overflow-hidden shadow-inner">
-                    <div class="h-full bg-secondary dark:bg-secondary-container w-0 transition-all duration-700 ease-out"
-                        id="progress-bar"></div>
-                </div>
-            </div>
-            <div class="w-full md:w-2/3 hidden" id="feedback-area">
-                <div
-                    class="p-4 rounded-lg border-l-4 bg-[#D5F5E3] dark:bg-[#1E8449]/20 border-[#1E8449] dark:border-[#58D68D] flex items-center gap-3 shadow-sm transition-all pop-in">
-                    <span class="material-symbols-outlined text-[#1E8449] dark:text-[#58D68D]"
-                        id="feedback-icon">info</span>
-                    <p class="text-[#1E8449] dark:text-[#58D68D] font-label-lg text-label-lg" id="feedback-msg"></p>
-                </div>
-            </div>
-        </section>
-    </main>
+<!-- ── SCORE ─────────────────────────────────────────── -->
+<div class="glass score-wrap">
+  <div class="score-row">
+    <span class="score-lbl">Puntuación</span>
+    <span class="score-val" id="score-val">0 / 10</span>
+  </div>
+  <div class="score-track"><div class="score-fill" id="score-fill"></div></div>
+</div>
 
-    <!-- Bottom Action Bar / Nav -->
-    <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center py-2 px-6 glass-panel rounded-t-2xl">
-        <button
-            class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim hover:bg-surface-variant dark:hover:bg-white/10 px-6 py-2 transition-all rounded-xl active:scale-95"
-            id="btn-verify">
-            <span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
-            <span class="font-label-md text-label-md mt-1">Verificar</span>
-        </button>
-        <button
-            class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim hover:bg-surface-variant dark:hover:bg-white/10 px-6 py-2 transition-all rounded-xl active:scale-95"
-            id="btn-retry">
-            <span class="material-symbols-outlined" data-icon="replay">replay</span>
-            <span class="font-label-md text-label-md mt-1">Reintentar</span>
-        </button>
-        <button
-            class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim hover:bg-surface-variant dark:hover:bg-white/10 px-6 py-2 transition-all rounded-xl active:scale-95"
-            id="btn-solution">
-            <span class="material-symbols-outlined" data-icon="lightbulb">lightbulb</span>
-            <span class="font-label-md text-label-md mt-1">Solución</span>
-        </button>
-    </nav>
+<!-- ── FEEDBACK ───────────────────────────────────────── -->
+<div class="feedback" id="feedback"></div>
 
-    <script>
-        // Configuración Dark Mode
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeIcon = document.getElementById('theme-icon');
-        const htmlElement = document.documentElement;
+<!-- ── BUTTONS ────────────────────────────────────────── -->
+<div class="btn-row">
+  <button class="btn btn-v" id="btn-v">✅ Verificar</button>
+  <button class="btn btn-r" id="btn-r">🔄 Reintentar</button>
+  <button class="btn btn-s" id="btn-s">💡 Solución</button>
+</div>
 
-        themeToggle.addEventListener('click', () => {
-            htmlElement.classList.toggle('dark');
-            if (htmlElement.classList.contains('dark')) {
-                themeIcon.textContent = 'light_mode';
-            } else {
-                themeIcon.textContent = 'dark_mode';
-            }
-        });
+<script>
+/* ── SETUP ─────────────────────────────────────────── */
+const src   = document.getElementById('source-container');
+const fill  = document.getElementById('score-fill');
+const val   = document.getElementById('score-val');
+const fb    = document.getElementById('feedback');
+const total = document.querySelectorAll('.chip').length;
 
-        // Implementación de SortableJS para soporte nativo táctil y de ratón
-        const sourceContainer = document.getElementById('source-container');
-        const zoneContents = document.querySelectorAll('.zone-content');
+const sopts = {
+  group:'edu',animation:220,
+  ghostClass:'sortable-ghost',
+  dragClass:'sortable-drag',
+  easing:'cubic-bezier(0.34,1.56,0.64,1)',
+  onEnd: updateBankState
+};
 
-        const sortableOptions = {
-            group: 'shared', // Conjunto para poder mover entre todos
-            animation: 250,
-            ghostClass: 'sortable-ghost',
-            dragClass: 'sortable-drag',
-            easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
-            onChoose: function (evt) {
-                // Efecto al tocar la tarjeta (feedback para móvil)
-                evt.item.style.transform = 'scale(1.05)';
-            },
-            onUnchoose: function (evt) {
-                evt.item.style.transform = '';
-            },
-            onMove: function (evt, originalEvent) {
-                // Se puede agregar lógica al mover
-            }
-        };
+new Sortable(src, sopts);
+document.querySelectorAll('.zone-content').forEach(z => new Sortable(z, sopts));
 
-        // Iniciar Sortable en el contenedor origen
-        new Sortable(sourceContainer, sortableOptions);
+/* Dragover highlight for SortableJS zones */
+document.querySelectorAll('.drop-zone').forEach(zone => {
+  zone.addEventListener('dragover',  () => zone.classList.add('dragover'));
+  zone.addEventListener('dragleave', e => { if(!zone.contains(e.relatedTarget)) zone.classList.remove('dragover'); });
+  zone.addEventListener('drop',      () => zone.classList.remove('dragover'));
+});
 
-        // Iniciar Sortable en cada zona de soltado
-        zoneContents.forEach(zone => {
-            new Sortable(zone, sortableOptions);
-        });
+function updateBankState(){
+  const empty = src.querySelectorAll('.chip').length === 0;
+  src.classList.toggle('empty', empty);
+}
 
-        // Lógica de validación
-        const btnVerify = document.getElementById('btn-verify');
-        const btnRetry = document.getElementById('btn-retry');
-        const btnSolution = document.getElementById('btn-solution');
-        const scoreText = document.getElementById('score-text');
-        const progressBar = document.getElementById('progress-bar');
-        const feedbackArea = document.getElementById('feedback-area');
-        const feedbackMsg = document.getElementById('feedback-msg');
-        const feedbackIcon = document.getElementById('feedback-icon');
+/* ── VERIFY ────────────────────────────────────────── */
+document.getElementById('btn-v').addEventListener('click', () => {
+  const inZones = document.querySelectorAll('.drop-zone .zone-content .chip');
+  let score = 0;
+  inZones.forEach(chip => {
+    const zone    = chip.closest('.drop-zone').dataset.zone;
+    const correct = chip.dataset.correct;
+    chip.classList.remove('correct','incorrect','shake');
+    if(zone === correct){
+      score++;
+      chip.classList.add('correct');
+    } else {
+      chip.classList.add('incorrect','shake');
+      setTimeout(()=>chip.classList.remove('shake'),450);
+    }
+  });
+  const pct = Math.round(score/total*100);
+  setScore(score, pct);
 
-        const totalChips = document.querySelectorAll('.chip').length;
+  if(pct===100){
+    fill.classList.remove('bad');
+    confetti({particleCount:130,spread:80,origin:{y:.55}});
+    showFb('ok','🎉 ¡Increíble! Clasificaste correctamente todos los servicios digitales.');
+  } else if(pct>=70){
+    fill.classList.add('bad');
+    showFb('warn',`⚠️ Tienes ${score} de ${total} correctas. ¡Casi! Revisa los elementos en rojo.`);
+  } else if(pct>=40){
+    fill.classList.add('bad');
+    showFb('err',`📖 Buen intento (${score}/${total}). Algunos servicios pueden ser confusos — reubica los elementos rojos.`);
+  } else {
+    fill.classList.add('bad');
+    showFb('err',`❌ No te rindas (${score}/${total}). Clasifica según el tipo de servicio financiero que ofrece cada app.`);
+  }
+});
 
-        function triggerConfetti() {
-            const duration = 3000;
-            const animationEnd = Date.now() + duration;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+/* ── RETRY ─────────────────────────────────────────── */
+document.getElementById('btn-r').addEventListener('click', () => {
+  document.querySelectorAll('.chip').forEach(c => {
+    c.classList.remove('correct','incorrect','shake');
+    src.appendChild(c);
+  });
+  setScore(0,0);
+  fill.classList.remove('bad');
+  hideFb();
+  updateBankState();
+});
 
-            function randomInRange(min, max) {
-                return Math.random() * (max - min) + min;
-            }
+/* ── SOLUTION ──────────────────────────────────────── */
+document.getElementById('btn-s').addEventListener('click', () => {
+  document.querySelectorAll('.chip').forEach(chip => {
+    const z = chip.dataset.correct;
+    chip.classList.remove('incorrect','shake');
+    chip.classList.add('correct');
+    document.getElementById('zc-'+z).appendChild(chip);
+  });
+  setScore(total,100);
+  fill.classList.remove('bad');
+  showFb('info','💡 Esta es la clasificación correcta según el tipo de servicio digital o financiero.');
+  updateBankState();
+});
 
-            const interval = setInterval(function () {
-                const timeLeft = animationEnd - Date.now();
-
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
-
-                const particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-            }, 250);
-        }
-
-        btnVerify.addEventListener('click', () => {
-            let score = 0;
-
-            // Revisar todas las tarjetas que ya no están en sourceContainer
-            const allInZones = document.querySelectorAll('.drop-zone .zone-content .chip');
-
-            allInZones.forEach(chip => {
-                const zoneElement = chip.closest('.drop-zone');
-                if (!zoneElement) return;
-
-                const zone = zoneElement.dataset.zone;
-                const correctZone = chip.dataset.correct;
-
-                // Limpiar clases previas
-                chip.classList.remove('border-outline-variant', 'border-error', 'border-secondary', 'bg-error-container', 'bg-secondary-container', 'dark:bg-slate-800');
-
-                if (zone === correctZone) {
-                    score++;
-                    chip.classList.add('border-secondary', 'bg-secondary-container', 'text-on-secondary-container', 'dark:bg-[#1E8449]', 'dark:text-white', 'dark:border-[#58D68D]');
-                    chip.classList.remove('text-primary');
-                } else {
-                    chip.classList.add('border-error', 'bg-error-container', 'text-on-error-container', 'shake', 'dark:bg-[#93000a]', 'dark:text-white', 'dark:border-[#ffdad6]');
-                    chip.classList.remove('text-primary');
-                    setTimeout(() => chip.classList.remove('shake'), 500);
-                }
-            });
-
-            const percentage = (score / totalChips) * 100;
-            scoreText.textContent = `${score} / ${totalChips}`;
-            progressBar.style.width = `${percentage}%`;
-
-            // Modificar colores del progreso si hay errores o todo está bien
-            if (percentage === 100) {
-                progressBar.classList.remove('bg-error');
-                progressBar.classList.add('bg-secondary', 'dark:bg-[#58D68D]');
-                triggerConfetti();
-                feedbackIcon.textContent = 'celebration';
-            } else {
-                progressBar.classList.remove('bg-secondary', 'dark:bg-[#58D68D]');
-                progressBar.classList.add('bg-error');
-                feedbackIcon.textContent = 'info';
-            }
-
-            // Mostrar Feedback
-            feedbackArea.classList.remove('hidden');
-
-            // Ajustar el contenedor de feedback a error o success
-            const fbContainer = feedbackArea.firstElementChild;
-            fbContainer.className = 'p-4 rounded-lg border-l-4 flex items-center gap-3 shadow-sm transition-all pop-in';
-
-            if (percentage === 100) {
-                fbContainer.classList.add('bg-[#D5F5E3]', 'border-[#1E8449]', 'dark:bg-[#1E8449]/20', 'dark:border-[#58D68D]');
-                feedbackMsg.className = 'text-[#1E8449] dark:text-[#58D68D] font-label-lg text-label-lg';
-                feedbackIcon.className = 'material-symbols-outlined text-[#1E8449] dark:text-[#58D68D]';
-                feedbackMsg.textContent = "¡Increíble! Conoces perfectamente cómo clasificar estos servicios digitales.";
-            } else {
-                fbContainer.classList.add('bg-error-container', 'border-error', 'dark:bg-[#93000a]/30', 'dark:border-[#ffdad6]');
-                feedbackMsg.className = 'text-on-error-container dark:text-[#ffdad6] font-label-lg text-label-lg';
-                feedbackIcon.className = 'material-symbols-outlined text-on-error-container dark:text-[#ffdad6]';
-
-                if (percentage >= 70) {
-                    feedbackMsg.textContent = "¡Muy bien! Estás muy cerca de la perfección. Las tarjetas rojas están en el lugar equivocado.";
-                } else if (percentage >= 40) {
-                    feedbackMsg.textContent = "Buen intento. Algunos servicios pueden ser confusos, reubica los elementos en rojo.";
-                } else {
-                    feedbackMsg.textContent = "No te rindas. Clasificar servicios financieros ayuda a entender mejor sus funciones. Vuelve a intentarlo.";
-                }
-            }
-        });
-
-        btnRetry.addEventListener('click', () => {
-            const allChips = document.querySelectorAll('.chip');
-            allChips.forEach(chip => {
-                // Remover estilos de resultado
-                chip.className = 'chip pop-in bg-white dark:bg-slate-800 border border-outline-variant dark:border-slate-600 px-4 py-2 rounded-full shadow-sm hover:shadow-md font-label-lg text-label-lg text-primary dark:text-blue-200';
-                sourceContainer.appendChild(chip);
-            });
-
-            scoreText.textContent = `0 / ${totalChips}`;
-            progressBar.style.width = "0%";
-            progressBar.classList.remove('bg-error');
-            progressBar.classList.add('bg-secondary', 'dark:bg-[#58D68D]');
-            feedbackArea.classList.add('hidden');
-        });
-
-        btnSolution.addEventListener('click', () => {
-            const allChips = document.querySelectorAll('.chip');
-            allChips.forEach(chip => {
-                const correctZone = chip.dataset.correct;
-                const zoneElement = document.querySelector(`.drop-zone[data-zone="${correctZone}"] .zone-content`);
-
-                // Asignar estilo de correcto
-                chip.className = 'chip pop-in border-secondary bg-secondary-container text-on-secondary-container dark:bg-[#1E8449] dark:text-white dark:border-[#58D68D] px-4 py-2 rounded-full shadow-sm font-label-lg text-label-lg';
-
-                zoneElement.appendChild(chip);
-            });
-
-            scoreText.textContent = `${totalChips} / ${totalChips}`;
-            progressBar.style.width = "100%";
-            progressBar.classList.remove('bg-error');
-            progressBar.classList.add('bg-secondary', 'dark:bg-[#58D68D]');
-
-            // Mostrar mensaje de solución
-            feedbackArea.classList.remove('hidden');
-            const fbContainer = feedbackArea.firstElementChild;
-            fbContainer.className = 'p-4 rounded-lg border-l-4 bg-[#D5F5E3] border-[#1E8449] dark:bg-[#1E8449]/20 dark:border-[#58D68D] flex items-center gap-3 shadow-sm transition-all pop-in';
-            feedbackMsg.className = 'text-[#1E8449] dark:text-[#58D68D] font-label-lg text-label-lg';
-            feedbackIcon.className = 'material-symbols-outlined text-[#1E8449] dark:text-[#58D68D]';
-            feedbackIcon.textContent = 'lightbulb';
-            feedbackMsg.textContent = "Esta es la clasificación correcta según el tipo de servicio financiero o digital.";
-        });
-
-    </script>
+/* ── HELPERS ───────────────────────────────────────── */
+function setScore(n, pct){
+  val.textContent = `${n} / ${total}`;
+  fill.style.width = pct+'%';
+}
+function showFb(cls,msg){
+  fb.className='feedback show '+cls;
+  fb.textContent=msg;
+}
+function hideFb(){
+  fb.className='feedback';
+  fb.textContent='';
+}
+</script>
 </body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Clasifica correctamente · Educación Financiera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+/* ── TOKENS ──────────────────────────────────────────── */
+:root{
+  --primary:#000c4b;
+  --primary-soft:#e8eaf6;
+  --safe:#1b7a43;     --safe-lt:#d5f5e3;   --safe-dk:#0a4a28;
+  --bank:#1a4f7a;     --bank-lt:#d6eaf8;   --bank-dk:#0d2f4a;
+  --store:#8a4a10;    --store-lt:#fdebd0;  --store-dk:#5a2f08;
+  --other:#4a5568;    --other-lt:#edf2f7;  --other-dk:#2d3748;
+  --danger:#ba1a1a;   --danger-lt:#fff0f0;
+  --bg-from:#eef2ff;  --bg-to:#c7d9f5;
+  --surface:rgba(255,255,255,0.72);
+  --surface-border:rgba(255,255,255,0.9);
+  --shadow:0 4px 20px rgba(0,0,60,.10);
+  --shadow-chip:0 2px 8px rgba(0,0,0,.10);
+  --r:14px; --r-chip:40px;
+  --gap:clamp(6px,2vw,12px);
+}
 
+/* ── RESET ───────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;overflow-x:hidden}
+
+/* ── BODY ────────────────────────────────────────────── */
+body{
+  font-family:'Nunito',sans-serif;
+  background:linear-gradient(145deg,var(--bg-from) 0%,var(--bg-to) 100%);
+  background-attachment:local;
+  min-height:100%;
+  padding:clamp(8px,2.5vw,14px);
+  display:flex;
+  flex-direction:column;
+  gap:var(--gap);
+  color:var(--primary);
+}
+
+/* ── GLASS MIXIN ─────────────────────────────────────── */
+.glass{
+  background:var(--surface);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1.5px solid var(--surface-border);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+}
+
+/* ── HEADER ──────────────────────────────────────────── */
+.header{
+  padding:clamp(8px,2.5vw,12px) clamp(10px,3vw,16px);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.header-icon{font-size:clamp(1.4rem,5vw,1.8rem);line-height:1}
+.header-title{
+  font-size:clamp(.85rem,3.5vw,1.05rem);
+  font-weight:900;
+  line-height:1.15;
+}
+.header-sub{
+  font-size:clamp(.62rem,2.2vw,.72rem);
+  font-weight:600;
+  color:#5a6282;
+  margin-top:2px;
+}
+
+/* ── CHIPS BANK ──────────────────────────────────────── */
+.bank-label{
+  font-size:clamp(.6rem,2vw,.68rem);
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#5a6282;
+  margin-bottom:6px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.bank-label::before{
+  content:'';width:6px;height:6px;
+  background:#5a6282;border-radius:50%;
+  flex-shrink:0;
+}
+.bank-panel{padding:clamp(8px,2.5vw,12px) clamp(10px,3vw,14px)}
+
+#source-container{
+  display:flex;
+  flex-wrap:wrap;
+  gap:clamp(5px,1.5vw,8px);
+  min-height:36px;
+  justify-content:center;
+  transition:min-height .3s;
+}
+#source-container.empty{
+  min-height:32px;
+  justify-content:center;
+  align-items:center;
+}
+#source-container.empty::after{
+  content:'✅ Todas las fichas colocadas';
+  font-size:.72rem;
+  font-weight:700;
+  color:#7b8ab5;
+}
+
+/* ── CHIP ────────────────────────────────────────────── */
+.chip{
+  background:#fff;
+  border:1.5px solid #cbd5e1;
+  border-radius:var(--r-chip);
+  padding:clamp(5px,1.8vw,7px) clamp(10px,3vw,14px);
+  font-family:'Nunito',sans-serif;
+  font-size:clamp(.68rem,2.4vw,.8rem);
+  font-weight:700;
+  color:var(--primary);
+  cursor:grab;
+  user-select:none;
+  touch-action:none;
+  white-space:nowrap;
+  box-shadow:var(--shadow-chip);
+  transition:transform .15s cubic-bezier(.34,1.56,.64,1),
+             box-shadow .15s,border-color .15s;
+}
+.chip:hover{transform:scale(1.06);box-shadow:0 5px 14px rgba(0,0,0,.16)}
+.chip:active{cursor:grabbing}
+.chip.correct{background:var(--safe-lt);border-color:var(--safe);color:var(--safe-dk)}
+.chip.incorrect{background:var(--danger-lt);border-color:var(--danger);color:#7f1d1d}
+
+/* SortableJS */
+.sortable-ghost{opacity:.3;border-style:dashed}
+.sortable-drag{
+  box-shadow:0 14px 30px rgba(0,0,60,.25)!important;
+  transform:scale(1.1) rotate(1.5deg)!important;
+  cursor:grabbing!important;
+  z-index:9999;border-radius:var(--r-chip);
+}
+
+/* ── ZONES GRID 2 × 2 ────────────────────────────────── */
+.zones-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:var(--gap);
+  flex:1; /* take available space */
+}
+
+.drop-zone{
+  border-radius:var(--r);
+  border:2px dashed;
+  padding:clamp(6px,2vw,10px) clamp(6px,2vw,8px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  min-height:clamp(115px,25vw,175px);
+  transition:transform .2s,box-shadow .2s,border-color .2s,background .2s;
+  position:relative;
+  overflow:hidden;
+}
+
+/* subtle inner pattern */
+.drop-zone::before{
+  content:'';
+  position:absolute;inset:0;
+  opacity:.04;
+  background-image:radial-gradient(circle,currentColor 1px,transparent 1px);
+  background-size:18px 18px;
+  pointer-events:none;
+}
+
+.zone-billetera{border-color:var(--safe);    background:rgba(27,122,67,.06);  color:var(--safe)}
+.zone-bancaria {border-color:var(--bank);    background:rgba(26,79,122,.06);  color:var(--bank)}
+.zone-tienda   {border-color:var(--store);   background:rgba(138,74,16,.06);  color:var(--store)}
+.zone-otro     {border-color:var(--other);   background:rgba(74,85,104,.06);  color:var(--other)}
+
+.drop-zone.dragover{
+  transform:scale(1.03);
+  border-style:solid;
+  box-shadow:0 0 0 3px rgba(0,60,200,.18);
+  background:rgba(235,244,255,.85)!important;
+  border-color:#2b6cb0!important;
+}
+
+/* Zone header */
+.zone-hd{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  margin-bottom:clamp(5px,1.5vw,8px);
+}
+.zone-icon{
+  font-size:clamp(1.1rem,3.8vw,1.5rem);
+  line-height:1;
+  filter:drop-shadow(0 1px 3px rgba(0,0,0,.15));
+}
+.zone-title{
+  font-size:clamp(.58rem,2vw,.72rem);
+  font-weight:900;
+  text-align:center;
+  line-height:1.2;
+  letter-spacing:.01em;
+}
+/* title colors inherited from parent .zone-* */
+
+/* Zone content (sortable target) */
+.zone-content{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  justify-content:center;
+  width:100%;
+  min-height:28px;
+}
+/* smaller chip inside zone */
+.zone-content .chip{
+  font-size:clamp(.6rem,1.9vw,.72rem);
+  padding:4px 9px;
+}
+
+/* ── SCORE ───────────────────────────────────────────── */
+.score-wrap{
+  padding:clamp(8px,2.5vw,11px) clamp(10px,3vw,14px);
+}
+.score-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+.score-lbl{font-size:.72rem;font-weight:800;color:#5a6282}
+.score-val{font-size:.9rem;font-weight:900;color:var(--primary)}
+.score-track{background:#e2e8f0;border-radius:20px;height:10px;overflow:hidden}
+.score-fill{
+  height:100%;border-radius:20px;width:0%;
+  background:linear-gradient(90deg,var(--safe),#34d399);
+  transition:width .7s cubic-bezier(.4,0,.2,1);
+}
+.score-fill.bad{background:linear-gradient(90deg,var(--danger),#f87171)}
+
+/* ── FEEDBACK ────────────────────────────────────────── */
+.feedback{
+  display:none;
+  border-radius:var(--r);
+  padding:clamp(9px,2.5vw,12px) clamp(12px,3vw,16px);
+  font-size:clamp(.72rem,2.5vw,.82rem);
+  font-weight:700;
+  line-height:1.55;
+  animation:slideUp .28s ease both;
+}
+.feedback.show{display:block}
+.feedback.ok  {background:var(--safe-lt); border:1.5px solid var(--safe);   color:var(--safe-dk)}
+.feedback.warn{background:#fffbeb;        border:1.5px solid #d97706;       color:#78350f}
+.feedback.err {background:var(--danger-lt);border:1.5px solid var(--danger);color:#7f1d1d}
+.feedback.info{background:var(--bank-lt); border:1.5px solid var(--bank);   color:var(--bank-dk)}
+
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(8px)}
+  to  {opacity:1;transform:translateY(0)}
+}
+
+/* ── BUTTONS ─────────────────────────────────────────── */
+.btn-row{
+  display:flex;gap:8px;
+  justify-content:center;flex-wrap:wrap;
+  padding-bottom:4px;
+}
+.btn{
+  font-family:'Nunito',sans-serif;
+  font-size:clamp(.72rem,2.5vw,.84rem);
+  font-weight:800;
+  border:none;border-radius:var(--r-chip);
+  padding:clamp(9px,2.5vw,11px) clamp(14px,4vw,22px);
+  cursor:pointer;
+  box-shadow:0 3px 10px rgba(0,0,0,.15);
+  transition:transform .15s,box-shadow .15s;
+  display:inline-flex;align-items:center;gap:5px;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.2)}
+.btn:active{transform:translateY(0)}
+.btn-v{background:var(--primary);color:#fff}
+.btn-r{background:#c05621;color:#fff}
+.btn-s{background:#4a5568;color:#fff}
+
+/* ── ANIMATIONS ──────────────────────────────────────── */
+@keyframes shake{
+  10%,90%{transform:translate3d(-1px,0,0)}
+  20%,80%{transform:translate3d(2px,0,0)}
+  30%,50%,70%{transform:translate3d(-3px,0,0)}
+  40%,60%{transform:translate3d(3px,0,0)}
+}
+.shake{animation:shake .42s ease both}
+
+@keyframes popIn{
+  0%{transform:scale(.7);opacity:0}
+  100%{transform:scale(1);opacity:1}
+}
+.pop{animation:popIn .28s cubic-bezier(.34,1.56,.64,1) both}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ───────────────────────────────────────── -->
+<header class="glass header">
+  <span class="header-icon">💳</span>
+  <div>
+    <div class="header-title">Educación Financiera</div>
+    <div class="header-sub">Arrastra cada app a su categoría · Puedes reubicarlo cuantas veces quieras</div>
+  </div>
+</header>
+
+<!-- ── CHIPS BANK ────────────────────────────────────── -->
+<section class="glass bank-panel">
+  <div class="bank-label">Elementos disponibles</div>
+  <div id="source-container">
+    <div class="chip pop" style="animation-delay:.00s" data-app="Nequi"          data-correct="billetera">Nequi</div>
+    <div class="chip pop" style="animation-delay:.05s" data-app="Daviplata"      data-correct="billetera">Daviplata</div>
+    <div class="chip pop" style="animation-delay:.10s" data-app="Movii"          data-correct="billetera">Movii</div>
+    <div class="chip pop" style="animation-delay:.15s" data-app="App Bancolombia" data-correct="bancaria">App Bancolombia</div>
+    <div class="chip pop" style="animation-delay:.20s" data-app="App BBVA"       data-correct="bancaria">App BBVA</div>
+    <div class="chip pop" style="animation-delay:.25s" data-app="Mercado Libre"  data-correct="tienda">Mercado Libre</div>
+    <div class="chip pop" style="animation-delay:.30s" data-app="Amazon"         data-correct="tienda">Amazon</div>
+    <div class="chip pop" style="animation-delay:.35s" data-app="WhatsApp"       data-correct="otro">WhatsApp</div>
+    <div class="chip pop" style="animation-delay:.40s" data-app="Google Maps"    data-correct="otro">Google Maps</div>
+    <div class="chip pop" style="animation-delay:.45s" data-app="Rappi"          data-correct="otro">Rappi</div>
+  </div>
+</section>
+
+<!-- ── ZONES GRID 2 × 2 ──────────────────────────────── -->
+<div class="zones-grid">
+
+  <div class="drop-zone zone-billetera" data-zone="billetera">
+    <div class="zone-hd">
+      <span class="zone-icon">📱</span>
+      <span class="zone-title">Billetera<br>digital</span>
+    </div>
+    <div class="zone-content" id="zc-billetera"></div>
+  </div>
+
+  <div class="drop-zone zone-bancaria" data-zone="bancaria">
+    <div class="zone-hd">
+      <span class="zone-icon">🏦</span>
+      <span class="zone-title">App<br>bancaria</span>
+    </div>
+    <div class="zone-content" id="zc-bancaria"></div>
+  </div>
+
+  <div class="drop-zone zone-tienda" data-zone="tienda">
+    <div class="zone-hd">
+      <span class="zone-icon">🛒</span>
+      <span class="zone-title">Tienda<br>en línea</span>
+    </div>
+    <div class="zone-content" id="zc-tienda"></div>
+  </div>
+
+  <div class="drop-zone zone-otro" data-zone="otro">
+    <div class="zone-hd">
+      <span class="zone-icon">📦</span>
+      <span class="zone-title">Otro</span>
+    </div>
+    <div class="zone-content" id="zc-otro"></div>
+  </div>
+
+</div><!-- .zones-grid -->
+
+<!-- ── SCORE ─────────────────────────────────────────── -->
+<div class="glass score-wrap">
+  <div class="score-row">
+    <span class="score-lbl">Puntuación</span>
+    <span class="score-val" id="score-val">0 / 10</span>
+  </div>
+  <div class="score-track"><div class="score-fill" id="score-fill"></div></div>
+</div>
+
+<!-- ── FEEDBACK ───────────────────────────────────────── -->
+<div class="feedback" id="feedback"></div>
+
+<!-- ── BUTTONS ────────────────────────────────────────── -->
+<div class="btn-row">
+  <button class="btn btn-v" id="btn-v">✅ Verificar</button>
+  <button class="btn btn-r" id="btn-r">🔄 Reintentar</button>
+  <button class="btn btn-s" id="btn-s">💡 Solución</button>
+</div>
+
+<script>
+/* ── SETUP ─────────────────────────────────────────── */
+const src   = document.getElementById('source-container');
+const fill  = document.getElementById('score-fill');
+const val   = document.getElementById('score-val');
+const fb    = document.getElementById('feedback');
+const total = document.querySelectorAll('.chip').length;
+
+const sopts = {
+  group:'edu',animation:220,
+  ghostClass:'sortable-ghost',
+  dragClass:'sortable-drag',
+  easing:'cubic-bezier(0.34,1.56,0.64,1)',
+  onEnd: updateBankState
+};
+
+new Sortable(src, sopts);
+document.querySelectorAll('.zone-content').forEach(z => new Sortable(z, sopts));
+
+/* Dragover highlight for SortableJS zones */
+document.querySelectorAll('.drop-zone').forEach(zone => {
+  zone.addEventListener('dragover',  () => zone.classList.add('dragover'));
+  zone.addEventListener('dragleave', e => { if(!zone.contains(e.relatedTarget)) zone.classList.remove('dragover'); });
+  zone.addEventListener('drop',      () => zone.classList.remove('dragover'));
+});
+
+function updateBankState(){
+  const empty = src.querySelectorAll('.chip').length === 0;
+  src.classList.toggle('empty', empty);
+}
+
+/* ── VERIFY ────────────────────────────────────────── */
+document.getElementById('btn-v').addEventListener('click', () => {
+  const inZones = document.querySelectorAll('.drop-zone .zone-content .chip');
+  let score = 0;
+  inZones.forEach(chip => {
+    const zone    = chip.closest('.drop-zone').dataset.zone;
+    const correct = chip.dataset.correct;
+    chip.classList.remove('correct','incorrect','shake');
+    if(zone === correct){
+      score++;
+      chip.classList.add('correct');
+    } else {
+      chip.classList.add('incorrect','shake');
+      setTimeout(()=>chip.classList.remove('shake'),450);
+    }
+  });
+  const pct = Math.round(score/total*100);
+  setScore(score, pct);
+
+  if(pct===100){
+    fill.classList.remove('bad');
+    confetti({particleCount:130,spread:80,origin:{y:.55}});
+    showFb('ok','🎉 ¡Increíble! Clasificaste correctamente todos los servicios digitales.');
+  } else if(pct>=70){
+    fill.classList.add('bad');
+    showFb('warn',`⚠️ Tienes ${score} de ${total} correctas. ¡Casi! Revisa los elementos en rojo.`);
+  } else if(pct>=40){
+    fill.classList.add('bad');
+    showFb('err',`📖 Buen intento (${score}/${total}). Algunos servicios pueden ser confusos — reubica los elementos rojos.`);
+  } else {
+    fill.classList.add('bad');
+    showFb('err',`❌ No te rindas (${score}/${total}). Clasifica según el tipo de servicio financiero que ofrece cada app.`);
+  }
+});
+
+/* ── RETRY ─────────────────────────────────────────── */
+document.getElementById('btn-r').addEventListener('click', () => {
+  document.querySelectorAll('.chip').forEach(c => {
+    c.classList.remove('correct','incorrect','shake');
+    src.appendChild(c);
+  });
+  setScore(0,0);
+  fill.classList.remove('bad');
+  hideFb();
+  updateBankState();
+});
+
+/* ── SOLUTION ──────────────────────────────────────── */
+document.getElementById('btn-s').addEventListener('click', () => {
+  document.querySelectorAll('.chip').forEach(chip => {
+    const z = chip.dataset.correct;
+    chip.classList.remove('incorrect','shake');
+    chip.classList.add('correct');
+    document.getElementById('zc-'+z).appendChild(chip);
+  });
+  setScore(total,100);
+  fill.classList.remove('bad');
+  showFb('info','💡 Esta es la clasificación correcta según el tipo de servicio digital o financiero.');
+  updateBankState();
+});
+
+/* ── HELPERS ───────────────────────────────────────── */
+function setScore(n, pct){
+  val.textContent = `${n} / ${total}`;
+  fill.style.width = pct+'%';
+}
+function showFb(cls,msg){
+  fb.className='feedback show '+cls;
+  fb.textContent=msg;
+}
+function hideFb(){
+  fb.className='feedback';
+  fb.textContent='';
+}
+</script>
+</body>
 </html>
